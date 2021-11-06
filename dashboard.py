@@ -23,8 +23,8 @@ app.layout = html.Div(
                 html.H1(
                     children="Wells Analytics",style={'textAlign': 'center'}, className="header-title"), #Header title
                 html.H2(
-                    children="Analyze the Wells records"
-                    " by county in the Permian Basin"
+                    children="Deep dive into the O&G Wells"
+                    " by County in the Permian Basin"
                     " between 2018 and 2021",
                     className="header-description", style={'textAlign': 'center'},
                 ),
@@ -54,7 +54,7 @@ app.layout = html.Div(
             children=[
                 html.Div(
                 children = dcc.Graph(
-                    id = 'scatter',
+                    id = 'bibar',
                 ),
                 style={'width': '50%', 'display': 'inline-block'},
             ),
@@ -66,7 +66,7 @@ app.layout = html.Div(
             ),
                 html.Div(
                 children = dcc.Graph(
-                    id = 'bibar',
+                    id = 'scatter',
                 ),
                 style={'width': '50%', 'display': 'inline-block'},
             ),
@@ -95,7 +95,7 @@ def update_chart1(Year):
         size="DI Lateral Length",
         color="DI Lateral Length",
         color_continuous_scale=px.colors.sequential.Plotly3,
-        title="Total Lateral Length by County",
+        title="Total Lateral Length (ft)",
     )
     scatter.update_layout(
         xaxis_tickangle=30,
@@ -120,6 +120,7 @@ def update_chart2(Year):
         color_continuous_scale=px.colors.sequential.RdBu,
         text=filtered_data.groupby("Operator Company Name")["DI Lateral Length"].agg(sum),
         title="Drilled Lateral by Operator",
+        labels={"x": "Total Lateral Length (ft)", "y": "Operator Company Name"},
         orientation="h",
     )
     bar.update_layout(
@@ -152,12 +153,12 @@ def update_chart3(Year):
         name="Gas wells",
     )
     data = [trace1, trace2]
-    layout = go.Layout(barmode="group", title="Oil Wells vs Gas wells")
+    layout = go.Layout(barmode="group", title="Oil wells vs Gas wells")
     bibar = go.Figure(data=data, layout=layout)
     bibar.update_layout(
         title=dict(x=0.5),
         xaxis_title="County",
-        yaxis_title="DI Lateral Length",
+        yaxis_title="Lateral Length (ft)",
         paper_bgcolor="#BDBDBD",
         margin=dict(l=20, r=20, t=50, b=20),
     )
@@ -174,7 +175,7 @@ def update_chart4(Year):
         filtered_data,
         x=filtered_data.groupby("DI Play")["DI Lateral Length"].agg(sum),
         y=filtered_data["DI Play"].unique(),
-        labels={"x": "Total Recorded", "y": "DI Play"},
+        labels={"x": "Total Lateral Length (ft)", "y": "DI Play"},
         color=filtered_data.groupby("DI Play")["DI Lateral Length"].agg(sum),
         color_continuous_scale=px.colors.sequential.Sunset,
         # color_discrete_sequence=['rgb(253,180,98)','rgb(190,186,218)'],
